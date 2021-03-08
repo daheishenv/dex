@@ -1,0 +1,83 @@
+<template>
+  <div style="height: 100%">
+    <header class="mint-header box-shadow is-fixed">
+      <h1 class="mint-header-title">
+        <img src="@/assets/img/logo.png" alt=""
+        style="display: inline-block; width: .5rem;vertical-align: middle;">
+        <span style="vertical-align: middle;">绿动e生活</span>
+      </h1>
+    </header>
+
+    <div class="app-content">
+      <div class="bannerSwiper">
+          <banner :photos="datas.bannerList"/>
+        </div>
+        <div class="userjf">
+          <span>今日积分：{{Number(datas.operation_amount_sum).toFixed(0)}}</span>
+          <span>总积分：{{Number(datas.integral).toFixed(0)}}</span>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script>
+
+import Banner from '@/components/Banner';
+
+export default {
+  data() {
+    return {
+      datas: [],
+    };
+  },
+  components: {
+    Banner,
+  },
+  created() {
+    this.handleGetDate();
+  },
+  mounted() {
+  },
+  methods: {
+    handleGetDate() {
+      this.$http.get('/index', {}).then((res) => {
+        if (res === false) return;
+        if (res.code !== 200) {
+          const msg = res.msg || '获取失败，请刷新重试！';
+          this.$toast(msg);
+          return;
+        }
+        this.datas = res.data;
+      });
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+
+  .app-content {
+    padding: .95rem 0 1.2rem;
+  }
+
+  .bannerSwiper {
+    margin: .3rem .3rem 0.1rem;
+    padding: 0 8px;
+    border-radius: 5px;
+    height: 90%;
+    box-sizing: border-box;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  }
+  .userjf {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.1rem 0.35rem;
+
+    span {
+      font-size: .28rem;
+      color: #666;
+    }
+  }
+</style>
+

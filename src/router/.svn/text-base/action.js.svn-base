@@ -1,0 +1,12 @@
+import router from '@/router';
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  }
+  next();
+  // console.log(`路由请求前: ${to}, ${from}, ${next}, ${to.meta.title}`);
+});
+
+// console.log(`路由请求后: ${to}, ${from}, ${next}`);
+router.afterEach(() => {});

@@ -1,0 +1,62 @@
+import axios from 'axios';
+import qs from 'qs'; // fromData 转 string
+import { Toast, Indicator } from 'mint-ui';
+
+const ApiVersion = 'api'; // 默认请求地址
+const https = axios.create({
+  baseURL: ApiVersion,
+  timeout: 5000,
+  auth: {
+  },
+});
+
+https.defaults.transformRequest = [(data, header) => { // 开始请求前期
+  if (!header['Content-Type']) {
+    return qs.stringify(data);
+  }
+  return data;
+}];
+
+https.interceptors.request.use((config) => { // 请求前期后
+  Indicator.open();
+  return config;
+}, error => Promise.reject(error));
+
+https.interceptors.response.use((response) => { // 请求后
+  Indicator.close();
+  const res = response.data;
+  if (res.code === 666) { // 未认证
+    window.location.href = `${res.url}?path=http://www.zgldsh.com/`;
+    return false;
+  }
+  return res; // eslint-disable-line
+}, (error) => {
+  Indicator.close();
+  if (!error.response) {
+    Toast({
+      message: '请求错误，稍后再试',
+      position: 'center',
+      duration: 4000,
+    });
+    return false;
+  }
+  switch (error.response.status) {
+    case 504:
+      Toast({
+        message: '网络错误，请检查后重试',
+        position: 'center',
+        duration: 4000,
+      });
+      break;
+    default:
+      Toast({
+        message: '系统错误，请联系管理员',
+        position: 'center',
+        duration: 4000,
+      });
+      break;
+  }
+  return false;
+});
+
+export default https;

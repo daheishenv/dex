@@ -1,0 +1,77 @@
+
+<!-- Embed Newdex's trading page -->
+<iframe src="https://newdex.340wan.com/embed-trade/?ref=bloks&chain=eos&channel=bloksio&language=zh-CN" id="newdex_iframe" style="min-height: calc(100vh - 120px);width: 100%;overflow: auto;" width="100%" frameborder="0"></iframe>
+
+<!-- Javascript code demo for communicating with Newdex -->
+<script>
+window.addEventListener('message', receiveMessage, false);
+function receiveMessage(event) {
+  const origin = event.origin || event.originalEvent.origin;
+  if (origin !== 'https://newdex.340wan.com') return;
+  const message = JSON.parse(event.data);
+  switch (message.action) {
+    case 'getConfig':
+      var response = {
+        language: 'en',
+      }
+      responseMessage(message.action, response);
+      break;
+    case 'setHeight':
+      document.getElementById('newdex_iframe').style.height = parseInt(message.data.height) + 'px';
+      break;
+    case 'getAccount':
+      var response = {
+        account: 'newdexiotest',
+        authority: 'active',
+        publicKey: 'EOS5C7eh8CD9KqYETumPFjRjYaZrzPtQ8xt5uYY8XuTFZRRS8Sm1P',
+        blockchain: 'eos' // eos/bos/meetone/enu/fibos/telos
+      }
+      //response the logined account
+      responseMessage(message.action, response);  
+      break;
+    // more...
+  }
+}
+
+function responseMessage(action, data) {
+  var iframe = document.getElementById('newdex_iframe');
+  var targetOrigin = host;
+  var message = {action: action, data: data}
+  iframe.contentWindow.postMessage(JSON.stringify(message), targetOrigin);
+}
+</script>
+
+--------------
+
+// Communication interface list
+1. getConfig
+    request: none
+    response: { language }
+    ------
+    language: en / zh-CN / zh-TW / ko
+    
+2. setHeight
+    // Newdex will inform you to change the iframe height when window height changes.
+    request: height
+    response: none
+
+3. getAccount
+    request: none
+    response: { account, authority, publicKey, blockchain }
+    ------
+    account: EOS account
+    authority: account's permission, owner or active
+    publicKey: EOS public key for this account
+    blockchain: 'eos' // eos/bos/meetone/enu/fibos/telos
+  
+4. getArbitrarySignature
+    request: the data we need to signed
+    response: signed data
+
+5. transaction
+    request: transaction data
+    response: transaction result
+
+Additional Instruction: If page language changes, post message "getConfig" action directly, and then iframe language will change.
+
+

@@ -1,0 +1,12 @@
+// 例子
+function whatName(val) {
+  return `你好，${val}`;
+}
+function whatName2(val) {
+  return `你好，${val}`;
+}
+
+export {
+  whatName,
+  whatName2,
+};

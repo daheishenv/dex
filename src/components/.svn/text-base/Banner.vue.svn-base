@@ -1,0 +1,113 @@
+<template>
+    <div class="bannerbox" :class="{'byIndex':$route.name === 'index'}">
+      <!-- swiper -->
+      <swiper ref="mySwiper" :options="swiperOption">
+        <swiper-slide class="he100"
+        v-for="(item, index) in photos"
+        :key="index">
+          <div v-if="index === 0"
+          :style="'background:url('+item.img_url+') center no-repeat; background-size: cover;'"
+          class="he100"
+          @click="handleAction(item.link_id, item.model)">
+          </div>
+          <div v-else
+          :data-background="item.img_url" class="swiper-lazy he100"
+          @click="handleAction(item.link_id, item.model)">
+              <div class="swiper-lazy-preloader"></div>
+          </div>
+        </swiper-slide>
+        <div class="swiper-pagination swiper-pagination-bullets" slot="pagination"></div>
+      </swiper>
+    </div>
+</template>
+
+<script>
+import { swiper, swiperSlide } from 'vue-awesome-swiper';
+
+export default {
+  data() {
+    return {
+      swiperOption: {
+        autoplay: {
+          delay: 5000,
+        },
+        zoom: true,
+        // loop: true,
+        lazy: true,
+        loadPrevNext: true,
+        loadPrevNextAmount: 1,
+        effect: 'coverflow',
+        observer: true,
+        observeParents: true,
+        pagination: {
+          el: '.swiper-pagination',
+        },
+      },
+    };
+  },
+  props: {
+    photos: Array,
+  },
+  watch: {
+  },
+  components: {
+    swiper,
+    swiperSlide,
+  },
+  created() {
+  },
+  methods: {
+    handleAction(id, type) { // type 1 商品详情  2 新闻详情
+      if (id === Number(0)) return;
+      if (type === 1) {
+        this.$router.push({
+          name: 'goods',
+          params: { id },
+        });
+        return;
+      }
+      this.$router.push({
+        name: 'news-detail',
+        params: { id },
+      });
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+  .bannerbox {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  .he100 {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+  }
+  .swiper-container {
+    height: 100%;
+    overflow: initial;
+
+    .swiper-pagination {
+      height: 10px;
+      display: flex;
+      justify-content: center;
+    }
+  }
+  .byIndex {
+    .swiper-container {
+      margin-top: 2%;
+      height: 95%;
+      overflow: initial;
+
+      .swiper-pagination {
+        bottom: -.3rem;
+      }
+    }
+  }
+</style>
+

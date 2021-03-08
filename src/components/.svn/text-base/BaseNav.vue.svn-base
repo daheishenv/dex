@@ -1,0 +1,130 @@
+<template>
+  <ul class="box-shadow" :class="{noshowicon : showicon}">
+    <li>
+      <router-link to="/#">
+        <i class="icon iconfont icon-shouye"></i>
+        首页
+      </router-link>
+    </li>
+    <li>
+      <router-link to="/mall">
+        <i class="icon iconfont icon-shangpin"></i>
+        商城
+      </router-link>
+    </li>
+    <li>
+      <a @click="handleSaoYiSao" class="tysm-btn">
+        <img src="@/assets/img/sm-icon.png" alt="">
+      </a>
+    </li>
+    <li>
+      <router-link to="/find">
+        <i class="icon iconfont icon-zhinanzhidao"></i>
+        发现
+      </router-link>
+    </li>
+    <li>
+      <router-link to="/user">
+        <i class="icon iconfont icon-shenfenzheng" style="font-size: .55rem"></i>
+        我的
+      </router-link>
+    </li>
+  </ul>
+</template>
+
+<script>
+import wx from 'weixin-js-sdk';
+
+export default {
+  data() {
+    return {
+      showicon: true,
+    };
+  },
+  mounted() {
+    setTimeout(() => {
+      this.showicon = false;
+    }, 500);
+  },
+  methods: {
+    handleSaoYiSao() {
+      this.$http.post('/wechatSaoYiSao').then((res) => {
+        if (res === false) return;
+        if (res.code !== 200) {
+          const msg = res.msg || '获取失败，请刷新重试！';
+          this.$toast(msg);
+          return;
+        }
+        const self = this;
+        // zwx.config( res.data.js );
+        wx.config(JSON.parse(res.data.js));
+        wx.ready(() => {
+          wx.scanQRCode({
+            needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+            scanType: ['qrCode', 'barCode'], // 可以指定扫二维码还是一维码，默认二者都有
+            success: function () { // eslint-disable-line
+            },
+          });
+        });
+        wx.error(() => {
+          self.$toast('扫一扫调用失败，请重试！');
+        });
+      });
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+ul {
+  flex: 0 0 1rem;
+  display: flex;
+  font-size: .2rem;
+  color: #999;
+  width: 100%;
+  background-color: #fff;
+  padding-top: .07rem;
+  z-index: 9;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 1rem;
+  z-index: 999;
+  border-top: 1px solid rgba(177, 177, 177, 0.55);
+
+  li {
+    flex: 1;
+    text-align: center;
+
+    i {
+      display: block;
+      font-size: .55rem;
+      margin-bottom: .02rem;
+      margin-top: 0.1rem;
+    }
+
+    a {
+      display: block;
+      margin-top: -.06rem;
+      &.router-link-exact-active, &.router-link-active{
+        margin-top: -.08rem;
+        color: #4cd964;
+      }
+      &.tysm-btn {
+        img{
+          width: 1.3rem;
+          margin-top: -0.49rem;
+        }
+      }
+    }
+  }
+
+  &.noshowicon {
+    li {
+      i {
+        opacity: 0;
+      }
+    }
+  }
+}
+</style>

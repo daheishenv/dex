@@ -1,0 +1,94 @@
+/* eslint-disable */
+import Vue from 'vue';
+import Router from 'vue-router';
+
+Vue.use(Router);
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'index',
+      component: resolve => require(['@/views/index/Index'], resolve),
+      meta: { title: '首页', keepAlive: false },
+    },
+    {
+      path: '/mall',
+      name: 'mall',
+      component: resolve => require(['@/views/mall/Index'], resolve),
+      meta: { title: '绿动商城', keepAlive: true },
+    },
+    {
+      path: '/goods/:id',
+      name: 'goods',
+      component: resolve => require(['@/views/mall/Goods'], resolve),
+      meta: { title: '商品详情', keepAlive: false  },
+    },
+    {
+      path: '/find',
+      name: 'find',
+      component: resolve => require(['@/views/find/Index'], resolve),
+      meta: { title: '便民生活', keepAlive: false  },
+    },
+    {
+      path: '/news',
+      component: resolve => require(['@/views/find/Layout'], resolve),
+      redirect: '/',
+      children: [
+        {
+          path: '/',
+          name: 'news',
+          component: resolve => require(['@/views/find/news/Index'], resolve),
+          meta: { title: '资讯头条', keepAlive: false },
+        },
+        {
+          path: 'detail/:id',
+          name: 'news-detail',
+          component: resolve => require(['@/views/find/news/Detail'], resolve),
+          meta: { title: '资讯详情', keepAlive: false },
+        },
+      ],
+    },
+    {
+      path: '/user',
+      name: 'user',
+      component: resolve => require(['@/views/user/Index'], resolve),
+      meta: { title: '个人中心', keepAlive: false },
+    },
+    {
+      path: '/orders',
+      name: 'orders',
+      component: resolve => require(['@/views/user/Orders'], resolve),
+      meta: { title: '我的订单', keepAlive: false },
+    },
+    {
+      path: '/car',
+      name: 'car',
+      component: resolve => require(['@/views/user/Car'], resolve),
+      meta: { title: '我的购物车', keepAlive: false },
+    },
+    {
+      path: '/integral',
+      name: 'integral',
+      component: resolve => require(['@/views/user/Integral'], resolve),
+      meta: { title: '积分中心', keepAlive: false },
+    },
+    {
+      path: '/address',
+      name: 'address',
+      component: resolve => require(['@/views/user/Address'], resolve),
+      meta: { title: '我的地址', keepAlive: false },
+    },
+    {
+      path: '/pay',
+      name: 'pay',
+      component: resolve => require(['@/views/pay/Index'], resolve),
+      meta: { title: '订单确认', keepAlive: false },
+    },
+    {
+      path: '*',
+      component: resolve => require(['@/views/error/404'], resolve),
+      meta: { title: '404', keepAlive: false }
+    },
+  ],
+});
